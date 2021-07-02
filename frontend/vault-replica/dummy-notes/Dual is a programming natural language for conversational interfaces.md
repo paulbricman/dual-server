@@ -1,4 +1,0 @@
----
----
-
-A Dual skill is a Markdown file with frontmatter metadata. Among other fields, there user has to specify examples of [[Human API pushes crowdsourcing on the tech stack|commands]] coupled with their associated arguments. Code blocks in a Dual skill can either make use of other skills or execute code. Code block outputs and input components can be referenced through [[Concept handles are like addresses|pointer strings]]. The skill is used when the user places a command [[Optimizing for short semantic distances fosters learning|similar]] to the [[Family resemblance glues exemplars into fuzzy concepts|examples]]. In this, Dual is a programming natural language for [[Conversational interfaces render knowledge bases into agents|conversational interfaces]], requiring some getting used to (e.g. [[Fluid search output resembles working memory|fuzzy commands]], [[Few-shot learning exapts text generation|teaching by example]]).

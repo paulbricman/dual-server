@@ -1,4 +1,3 @@
-#![feature(proc_macro_hygiene, decl_macro)]
 extern crate anyhow;
 
 mod nlp;

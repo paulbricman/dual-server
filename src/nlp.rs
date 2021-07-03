@@ -1,3 +1,4 @@
+extern crate reqwest;
 use crate::server::Query;
 use crate::utils::*;
 
@@ -11,6 +12,7 @@ use rust_bert::resources::{RemoteResource, Resource};
 use tch::Tensor;
 
 use regex::Regex;
+use std::fs;
 use std::ops::Deref;
 use std::sync::Arc;
 use tokio::sync::Mutex;
@@ -19,9 +21,7 @@ use tokio::sync::MutexGuard;
 use ngt::{DistanceType, Index, Properties, EPSILON};
 use pickledb::{PickleDb, PickleDbDumpPolicy};
 use sbert::SBertRT;
-use std::env;
 use std::path::Path;
-use std::path::PathBuf;
 
 pub type GenModel = Arc<Mutex<GPT2Generator>>;
 pub type Tokenizer = Arc<Mutex<TokenizerOption>>;
@@ -59,11 +59,37 @@ pub fn gen_model(config: GenerateConfig) -> GenModel {
 }
 
 pub fn emb_model() -> EmbModel {
-    let mut home: PathBuf = env::current_dir().unwrap();
-    home.push("models");
-    home.push("distiluse-base-multilingual-cased");
+    let home = Path::new("./src/models");
 
-    let emb_model = SBertRT::new(home.to_str().unwrap()).unwrap();
+    if !home.exists() {
+        fs::create_dir(home).unwrap();
+        fetch_file(
+            "https://github.com/paulbricman/rust-sbert-models/releases/download/0.0.2/config.json",
+            home.join("config.json").to_str().unwrap(),
+        );
+        fetch_file(
+            "https://github.com/paulbricman/rust-sbert-models/releases/download/0.0.2/config_dense.json",
+            home.join("config_dense.json").to_str().unwrap(),
+        );
+        fetch_file(
+            "https://github.com/paulbricman/rust-sbert-models/releases/download/0.0.2/config_pooling.json",
+            home.join("config_pooling.json").to_str().unwrap(),
+        );
+        fetch_file(
+            "https://github.com/paulbricman/rust-sbert-models/releases/download/0.0.2/model.ot",
+            home.join("model.ot").to_str().unwrap(),
+        );
+        fetch_file(
+            "https://github.com/paulbricman/rust-sbert-models/releases/download/0.0.2/model_dense.ot",
+            home.join("model_dense.ot").to_str().unwrap(),
+        );
+        fetch_file(
+            "https://github.com/paulbricman/rust-sbert-models/releases/download/0.0.2/vocab.txt",
+            home.join("vocab.txt").to_str().unwrap(),
+        );
+    }
+
+    let emb_model = SBertRT::new(home.as_os_str()).unwrap();
     Arc::new(Mutex::new(emb_model))
 }
 

@@ -64,6 +64,8 @@ fn json_body() -> impl Filter<Extract = (Query,), Error = warp::Rejection> + Clo
 
 /// Load model and tokenizer, define handlers, serve
 pub async fn serve() {
+    println!("Loading models...");
+
     let tokenizer: Tokenizer = task::spawn_blocking(move || {
         let c = gen_model_config();
         let t = tokenizer(c);

@@ -446,6 +446,27 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56899898ce76aaf4a0f24d914c97ea6ed976d42fec6ad33fcbb0a1103e07b2b0"
 
 [[package]]
+name = "dual-server"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "futures",
+ "itertools 0.10.1",
+ "ngt",
+ "once_cell",
+ "pickledb",
+ "regex",
+ "reqwest",
+ "rust-bert",
+ "rust_tokenizers",
+ "sbert",
+ "serde",
+ "tch",
+ "tokio",
+ "warp",
+]
+
+[[package]]
 name = "either"
 version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1652,27 +1673,6 @@ dependencies = [
  "wasm-bindgen-futures",
  "web-sys",
  "winreg",
-]
-
-[[package]]
-name = "rust-backend"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "futures",
- "itertools 0.10.1",
- "ngt",
- "once_cell",
- "pickledb",
- "regex",
- "reqwest",
- "rust-bert",
- "rust_tokenizers",
- "sbert",
- "serde",
- "tch",
- "tokio",
- "warp",
 ]
 
 [[package]]

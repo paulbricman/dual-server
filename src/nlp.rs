@@ -59,7 +59,7 @@ pub fn gen_model(config: GenerateConfig) -> GenModel {
 }
 
 pub fn emb_model() -> EmbModel {
-    let home = Path::new("./src/models");
+    let home = Path::new("./models");
 
     if !home.exists() {
         fs::create_dir(home).unwrap();

@@ -21,6 +21,7 @@ jobs:
       - name: Tag commit
         uses: tvdias/github-tagger@v0.0.2
         with:
+          repo-token: "${{ secrets.PSIONICA_WORKFLOWS }}"
           tag: "${{ github.event.inputs.tag }}"
       - name: Build
         run: cargo build --release --verbose

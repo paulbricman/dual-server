@@ -1,7 +1,6 @@
 extern crate anyhow;
 
 mod nlp;
-mod sbert_test;
 mod server;
 mod utils;
 

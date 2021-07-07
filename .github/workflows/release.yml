@@ -1,0 +1,27 @@
+name: Create new release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        default: "v0.0.1"
+        required: true
+        description: "New release version"
+      description:
+        default: "Implements CI/CD pipeline"
+        required: true
+        description: "New release description"
+        
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build
+        run: cargo build --release --verbose
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "target/release/dual-server"
+          token: ${{ secrets.DUAL_WORKFLOWS }}
+          tag: "${{ github.event.inputs.tag }}"

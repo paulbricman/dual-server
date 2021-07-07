@@ -1,0 +1,35 @@
+name: Create new release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        default: "v0.0.1"
+        required: true
+        description: "New release version"
+      description:
+        default: "Implements CI/CD pipeline"
+        required: true
+        description: "New release description"
+        
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Tag commit
+        uses: tvdias/github-tagger@v0.0.2
+        with:
+          tag: "${{ github.event.inputs.tag }}"
+      - name: Build
+        run: cargo build --release --verbose
+      - name: Run tests
+        run: cargo test --verbose
+      - name: Create new release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: target/release/dual-server
+        env:
+          GITHUB_TOKEN: ${{ secrets.PSIONICA_WORKFLOWS }}
+    

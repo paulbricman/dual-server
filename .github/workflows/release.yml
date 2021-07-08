@@ -38,6 +38,7 @@ jobs:
           - os: windows-latest
             bin: dual-server-windows
     steps:
+      - uses: actions/checkout@v2
       - name: Build
         run: "cargo build --release --bin ${{ matrix.bin }}"
       - uses: xresloader/upload-to-github-release@master

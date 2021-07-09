@@ -16,20 +16,20 @@ jobs:
   new_release:
     runs-on: ubuntu-latest 
     outputs:
-      release_id: ${{ steps.new_release.outputs.id }}
+      release_id: "${{ steps.new_release.outputs.id }}"
     steps:
       - uses: actions/checkout@v2
       - uses: ncipollo/release-action@v1
         id: new_release
         with:
-          token: ${{ secrets.DUAL_WORKFLOWS }}
+          token: "${{ secrets.DUAL_WORKFLOWS }}"
           tag: "${{ github.event.inputs.tag }}"
           description: "${{ github.event.inputs.description }}"
           
   build_release:
     name: Build release
     needs: new_release
-    runs-on: ${{ matrix.os }}
+    runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -50,8 +50,8 @@ jobs:
         run: "cargo build --release --bin ${{ matrix.bin }}"
       - uses: xresloader/upload-to-github-release@master
         env:
-          GITHUB_TOKEN: ${{ secrets.DUAL_WORKFLOWS }}
+          GITHUB_TOKEN: "${{ secrets.DUAL_WORKFLOWS }}"
         with:
           file: "${{ matrix.path }${{ matrix.bin }}"
-          release_id: ${{ needs.new_release.outputs.release_id }}
+          release_id: "${{ needs.new_release.outputs.release_id }}"
           verbose: true

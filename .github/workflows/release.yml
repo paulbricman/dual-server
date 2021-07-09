@@ -36,13 +36,13 @@ jobs:
         include:
           - os: ubuntu-latest
             bin: dual-server-linux
-            path: "target/release/"
+            path: "target/release/dual-server-linux"
           - os: macos-latest
             bin: dual-server-macos
-            path: "target/release/"
+            path: "target/release/dual-server-macos"
           - os: windows-latest
             bin: dual-server-windows
-            path: "target\\release\\.exe"
+            path: "target\\release\\dual-server-windows.exe"
     steps:
       - uses: actions/checkout@v2
       - name: Build
@@ -51,6 +51,6 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.DUAL_WORKFLOWS }}"
         with:
-          file: "${{ matrix.path }}${{ matrix.bin }}"
+          file: "${{ matrix.path }}"
           release_id: "${{ needs.new_release.outputs.release_id }}"
           verbose: true

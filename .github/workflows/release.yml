@@ -36,7 +36,7 @@ jobs:
         include:
           - os: windows-latest
             bin: dual-server-windows
-            path: "target\\release\\dual-server-windows.exe"
+            path: "target/release/dual-server-windows.exe"
     steps:
       - uses: actions/checkout@v2
       - name: Build

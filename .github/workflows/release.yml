@@ -14,10 +14,13 @@ on:
         
 jobs:
   new_release:
-    runs-on: ubuntu-latest      
+    runs-on: ubuntu-latest 
+    outputs:
+      release_id: ${{ steps.new_release.outputs.id }}
     steps:
       - uses: actions/checkout@v2
       - uses: ncipollo/release-action@v1
+        id: new_release
         with:
           token: ${{ secrets.DUAL_WORKFLOWS }}
           tag: "${{ github.event.inputs.tag }}"
@@ -33,10 +36,14 @@ jobs:
         include:
           - os: ubuntu-latest
             bin: dual-server-linux
+            path: "target/release/"
           - os: macos-latest
             bin: dual-server-macos
+            path: "target/release/"
           - os: windows-latest
             bin: dual-server-windows
+            path: "target\release\"
+
     steps:
       - uses: actions/checkout@v2
       - name: Build
@@ -45,6 +52,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.DUAL_WORKFLOWS }}
         with:
-          file: "target/release/${{ matrix.bin }}"
-          update_latest_release: true
+          file: "${{ matrix.path }${{ matrix.bin }}"
+          release_id: ${{ needs.new_release.outputs.release_id }}
           verbose: true

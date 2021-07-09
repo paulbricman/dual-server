@@ -3,12 +3,15 @@ use crate::server::Query;
 use crate::utils::*;
 
 use itertools::Itertools;
+use quackin::metrics::similarity::cosine;
 use rust_bert::gpt2::{
     GPT2Generator, Gpt2ConfigResources, Gpt2MergesResources, Gpt2ModelResources, Gpt2VocabResources,
 };
 use rust_bert::pipelines::common::{ModelType, TokenizerOption};
 use rust_bert::pipelines::generation_utils::{GenerateConfig, LanguageGenerator};
 use rust_bert::resources::{RemoteResource, Resource};
+use space::{Knn, LinearKnn, MetricPoint};
+use sprs::CsVec;
 use tch::Tensor;
 
 use regex::Regex;
@@ -18,7 +21,6 @@ use std::sync::Arc;
 use tokio::sync::Mutex;
 use tokio::sync::MutexGuard;
 
-use ngt::{DistanceType, Index, Properties, EPSILON};
 use pickledb::{PickleDb, PickleDbDumpPolicy};
 use sbert::SBertRT;
 use std::path::Path;
@@ -245,7 +247,21 @@ fn allowed_tokens_factory<'a>(
     })
 }
 
-pub async fn search(query: Query, emb_model: EmbModel) -> Vec<u32> {
+struct Cosine(Vec<f64>);
+
+impl MetricPoint for Cosine {
+    type Metric = u64;
+
+    fn distance(&self, other: &Self) -> Self::Metric {
+        let indices: Vec<usize> = (0..512).collect();
+        ((1. - cosine(
+            &CsVec::new(512, indices.clone(), self.0.clone()),
+            &CsVec::new(512, indices.clone(), other.0.clone()),
+        )) * 100000.) as u64
+    }
+}
+
+pub async fn search(query: Query, emb_model: EmbModel) -> Vec<usize> {
     let prompt = query.prompt;
     let context = query.context.unwrap();
     let emb_model = emb_model.lock().await;
@@ -278,18 +294,16 @@ pub async fn search(query: Query, emb_model: EmbModel) -> Vec<u32> {
         .collect();
 
     let prompt_emb = emb_model.forward(&[prompt], 1).unwrap();
-    let prop = Properties::dimension(512)
-        .unwrap()
-        .distance_type(DistanceType::Cosine)
-        .unwrap();
-    let mut index = Index::create("index/", prop).unwrap();
 
-    for emb in output_emb.iter() {
-        let _x = index.insert(emb.clone().into());
-    }
-    let _x = index.build(4);
-
-    let prompt_emb: Vec<f64> = prompt_emb[0].iter().map(|&e| e as f64).collect();
-    let res = index.search(prompt_emb.as_slice(), 3, EPSILON).unwrap();
-    res.iter().map(|e| e.id).collect()
+    let doc_emb: Vec<Cosine> = output_emb
+        .iter()
+        .map(|e| {
+            let cast_e = e.iter().map(|&f| f as f64).collect();
+            Cosine(cast_e)
+        })
+        .collect();
+    let query_emb = Cosine(prompt_emb[0].iter().map(|&f| f as f64).collect());
+    let search = LinearKnn(doc_emb.iter());
+    let results = search.knn(&query_emb, 3);
+    results.iter().map(|&e| e.index).collect()
 }

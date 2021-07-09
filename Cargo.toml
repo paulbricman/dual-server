@@ -17,9 +17,12 @@ warp = "0.3.1"
 rust_tokenizers = "~6.2.3"
 regex = "1"
 itertools = "0.10.1"
-ngt = "0.4.0"
 pickledb = "0.4.1"
 reqwest = "0.11.4"
+ngt = "0.4.0"
+space = "0.13.1"
+quackin = "0.1.1"
+sprs = "0.4.0"
 
 [[bin]]
 name = "dual-server-linux"

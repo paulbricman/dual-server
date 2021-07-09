@@ -51,6 +51,6 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.DUAL_WORKFLOWS }}"
         with:
-          file: "${{ matrix.path }${{ matrix.bin }}"
+          file: "${{ matrix.path }}${{ matrix.bin }}"
           release_id: "${{ needs.new_release.outputs.release_id }}"
           verbose: true

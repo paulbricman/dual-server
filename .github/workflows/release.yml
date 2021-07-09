@@ -42,7 +42,7 @@ jobs:
             path: "target/release/"
           - os: windows-latest
             bin: dual-server-windows
-            path: "target\\release\\"
+            path: "target\\release\\.exe"
     steps:
       - uses: actions/checkout@v2
       - name: Build
